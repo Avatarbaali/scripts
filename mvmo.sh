@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Move Movie ver 0.94
+# Move Movie ver 1.00
 # Author: Travis Simmons [simmonstravish@gmail.com]
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Description: Script that moves all video files from subdirectories into a single directory, removes tags, and deletes leftovers
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Parent directory where you keep all the video files. Comment out 'cd' to use current directory
-cd /media/travis/Grinder/Newshosting
+cd /mnt/Grinder/Newshosting
 PARENT=`pwd`
 
 # Remove stand alone sample files
@@ -25,25 +25,24 @@ mv **/*.{mkv,mp4,avi,mov,asv,flv,mpg,mwv,mts,mpeg,ogm,webm,m4v} $PARENT 2>/dev/n
 # Remove empty directories
 find ./ -type d -empty -exec rmdir {} \; 2>/dev/null
 
-# Replace underscores with spaces
-rename 's/_/ /g' *
-
-# Remove author tags from files
-rename 's/\[[^]]*\] //g' *
-rename 's/\[[^]]*\]//g' *
-
 # Replace dots with spaces
-for fname in *; do
-  name="${fname%\.*}"
-  extension="${fname#$name}"
-  newname="${name//./ }"
-  newfname="$newname""$extension"
-  if [ "$fname" != "$newfname" ]; then
-    mv "$fname" "$newfname"
-  fi  
+#for fname in *; do
+ # name="${fname%\.*}"
+  #extension="${fname#$name}"
+  #newname="${name//./ }"
+  #newfname="$newname""$extension"
+  #if [ "$fname" != "$newfname" ]; then
+ #     mv "$fname" "$newfname"
+  #fi 
+#done
+
+# Remove author tags from files and replace spaces with underscores
+ls | while read -r FILE
+do
+    mv -v "$FILE" `echo $FILE | tr ' ' '_' | tr -d "\'" | sed 's/\[[^]]*\]_//g' | sed 's/\[[^]]*\]//g'`
 done
+
 
 # All finished
 NUM=`ls *.{mkv,mp4,avi,mov,asv,flv,mpg,mwv,mts,mpeg,ogm,webm,m4v} 2>/dev/null | wc -l`
 echo -e "\e[34m##### $NUM files readied in $PARENT ##### \e[0m"
-
